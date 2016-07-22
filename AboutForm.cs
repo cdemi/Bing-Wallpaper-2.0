@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -22,18 +23,16 @@ namespace Bing_Wallpaper
             hideForm();
             base.OnLoad(e);
         }
-
+        private bool showing = false;
         private void hideForm()
         {
-            Visible = false;
-            ShowInTaskbar = false;
+            Visible = showing = ShowInTaskbar = false;
             Opacity = 0;
         }
 
         private void showForm()
         {
-            Visible = true;
-            ShowInTaskbar = true;
+            Visible = showing = ShowInTaskbar = true;
             Opacity = 1;
         }
 
@@ -44,7 +43,7 @@ namespace Bing_Wallpaper
 
         private void toolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            if (Visible)
+            if (showing)
                 hideForm();
             else
                 showForm();
@@ -58,6 +57,17 @@ namespace Bing_Wallpaper
         private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             toolStripMenuItem1.PerformClick();
+        }
+
+        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Process.Start("https://github.com/cdemi/Bing-Wallpaper-2.0");
+        }
+
+        private void AboutForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            e.Cancel = true;
+            hideForm();
         }
     }
 }
