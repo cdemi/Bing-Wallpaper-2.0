@@ -85,7 +85,6 @@ namespace Bing_Wallpaper
                     description = Regex.Match(bingResponse.images.FirstOrDefault().copyright, @"(.+?)(\s\(.+?\))").Groups[1].Value;
                 }
                 toolStripMenuItem2.Visible = true;
-                notifyIcon1.ShowBalloonTip(10000, "Today's Bing Wallpaper", description, ToolTipIcon.None);
                 string wallpapersPath = $@"{Environment.GetFolderPath(Environment.SpecialFolder.MyPictures)}\Bing Wallpapers\";
                 string picturePath = $"{wallpapersPath}{bingResponse.images.FirstOrDefault().hsh}.jpg";
                 if (!File.Exists(picturePath))
@@ -97,6 +96,7 @@ namespace Bing_Wallpaper
                         imageClient.DownloadFile(imageURL, picturePath);
                     }
                     Wallpaper.Set(picturePath);
+                    notifyIcon1.ShowBalloonTip(10000, "Today's Bing Wallpaper", description, ToolTipIcon.None);
                     timer1.Enabled = false;
                 }
                 else
