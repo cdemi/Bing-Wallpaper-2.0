@@ -16,6 +16,7 @@ namespace Bing_Wallpaper
             InitializeComponent();
         }
 
+        private Configuration configuration;
         protected override void OnLoad(EventArgs e)
         {
             hideForm();
@@ -49,6 +50,19 @@ namespace Bing_Wallpaper
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            if (File.Exists("config.json"))
+            {
+                configuration = JsonConvert.DeserializeObject<Configuration>(File.ReadAllText("config.json"));
+            }
+            else
+            {
+                //Load Default Configuration
+                configuration = new Configuration
+                {
+                    Path = $@"{Environment.GetFolderPath(Environment.SpecialFolder.MyPictures)}\Bing Wallpapers\",
+                    ShowNotification = true
+                };
+            }
             timer1_Tick(null, null);
         }
 
@@ -85,8 +99,8 @@ namespace Bing_Wallpaper
                     description = Regex.Match(bingResponse.images.FirstOrDefault().copyright, @"(.+?)(\s\(.+?\))").Groups[1].Value;
                 }
                 toolStripMenuItem2.Visible = true;
-                string wallpapersPath = $@"{Environment.GetFolderPath(Environment.SpecialFolder.MyPictures)}\Bing Wallpapers\";
-                string picturePath = $"{wallpapersPath}{bingResponse.images.FirstOrDefault().hsh}.jpg";
+                string wallpapersPath = configuration.Path;
+                string picturePath = $"{wallpapersPath}\\{bingResponse.images.FirstOrDefault().hsh}.jpg";
                 if (!File.Exists(picturePath))
                 {
                     if (!Directory.Exists(wallpapersPath))
@@ -96,7 +110,10 @@ namespace Bing_Wallpaper
                         imageClient.DownloadFile(imageURL, picturePath);
                     }
                     Wallpaper.Set(picturePath);
-                    notifyIcon1.ShowBalloonTip(10000, "Today's Bing Wallpaper", description, ToolTipIcon.None);
+
+                    if (configuration.ShowNotification)
+                        notifyIcon1.ShowBalloonTip(10000, "Today's Bing Wallpaper", description, ToolTipIcon.None);
+
                     timer1.Enabled = false;
                 }
                 else
