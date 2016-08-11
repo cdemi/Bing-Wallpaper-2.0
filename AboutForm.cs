@@ -85,35 +85,47 @@ namespace Bing_Wallpaper
         private string description;
         private string detailsURL;
 
+        private bool updateWallpaper(bool force = false)
+        {
+            BingImage bingResponse;
+            string imageURL;
+            using (WebClient bingClient = new WebClient())
+            {
+                bingResponse = JsonConvert.DeserializeObject<BingImage>(bingClient.DownloadString("http://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1&mkt=en-US"));
+                imageURL = $"http://www.bing.com{bingResponse.images.FirstOrDefault().url}";
+                detailsURL = bingResponse.images.FirstOrDefault().copyrightlink;
+                description = Regex.Match(bingResponse.images.FirstOrDefault().copyright, @"(.+?)(\s\(.+?\))").Groups[1].Value;
+            }
+            toolStripMenuItem2.Visible = true;
+            string wallpapersPath = configuration.Path;
+            string picturePath = $"{wallpapersPath}\\{bingResponse.images.FirstOrDefault().hsh}.jpg";
+            if ((!File.Exists(picturePath)) || force)
+            {
+                if (!Directory.Exists(wallpapersPath))
+                    Directory.CreateDirectory(wallpapersPath);
+                using (WebClient imageClient = new WebClient())
+                {
+                    imageClient.DownloadFile(imageURL, picturePath);
+                }
+                Wallpaper.Set(picturePath);
+
+                if (configuration.ShowNotification)
+                    notifyIcon1.ShowBalloonTip(10000, "Today's Bing Wallpaper", description, ToolTipIcon.None);
+
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         private void timer1_Tick(object sender, EventArgs e)
         {
             try
             {
-                BingImage bingResponse;
-                string imageURL;
-                using (WebClient bingClient = new WebClient())
+                if (updateWallpaper())
                 {
-                    bingResponse = JsonConvert.DeserializeObject<BingImage>(bingClient.DownloadString("http://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1&mkt=en-US"));
-                    imageURL = $"http://www.bing.com{bingResponse.images.FirstOrDefault().url}";
-                    detailsURL = bingResponse.images.FirstOrDefault().copyrightlink;
-                    description = Regex.Match(bingResponse.images.FirstOrDefault().copyright, @"(.+?)(\s\(.+?\))").Groups[1].Value;
-                }
-                toolStripMenuItem2.Visible = true;
-                string wallpapersPath = configuration.Path;
-                string picturePath = $"{wallpapersPath}\\{bingResponse.images.FirstOrDefault().hsh}.jpg";
-                if (!File.Exists(picturePath))
-                {
-                    if (!Directory.Exists(wallpapersPath))
-                        Directory.CreateDirectory(wallpapersPath);
-                    using (WebClient imageClient = new WebClient())
-                    {
-                        imageClient.DownloadFile(imageURL, picturePath);
-                    }
-                    Wallpaper.Set(picturePath);
-
-                    if (configuration.ShowNotification)
-                        notifyIcon1.ShowBalloonTip(10000, "Today's Bing Wallpaper", description, ToolTipIcon.None);
-
                     timer1.Enabled = false;
                 }
                 else
@@ -135,6 +147,11 @@ namespace Bing_Wallpaper
         private void toolStripMenuItem2_Click(object sender, EventArgs e)
         {
             notifyIcon1.ShowBalloonTip(10000, "Today's Bing Wallpaper", description, ToolTipIcon.None);
+        }
+
+        private void toolStripMenuItem3_Click(object sender, EventArgs e)
+        {
+            updateWallpaper(true);
         }
     }
 }
