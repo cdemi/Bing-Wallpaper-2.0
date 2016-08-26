@@ -37,7 +37,7 @@ namespace Bing_Wallpaper
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Application.Exit();
+            Environment.Exit(0);
         }
 
         private void toolStripMenuItem1_Click(object sender, EventArgs e)
@@ -122,20 +122,13 @@ namespace Bing_Wallpaper
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            try
+            if (updateWallpaper())
             {
-                if (updateWallpaper())
-                {
-                    timer1.Enabled = false;
-                }
-                else
-                {
-                    timer1.Interval = 600000;
-                }
+                timer1.Enabled = false;
             }
-            catch
+            else
             {
-
+                timer1.Interval = 600000;
             }
         }
 
