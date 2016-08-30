@@ -124,7 +124,7 @@ namespace Bing_Wallpaper
         {
             if (updateWallpaper())
             {
-                timer1.Enabled = false;
+                timer1.Interval = 3600000;
             }
             else
             {
