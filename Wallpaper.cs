@@ -16,7 +16,7 @@ namespace Bing_Wallpaper
 
         public static void Set(string picturePath)
         {
-            RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop", true);
+            var key = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop", true);
             key.SetValue(@"WallpaperStyle", 10.ToString());
             key.SetValue(@"TileWallpaper", 0.ToString());
 
