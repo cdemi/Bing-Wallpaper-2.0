@@ -16,22 +16,22 @@ namespace Bing_Wallpaper
             InitializeComponent();
         }
 
-        private Configuration configuration;
+        private Configuration _configuration;
         protected override void OnLoad(EventArgs e)
         {
-            hideForm();
+            HideForm();
             base.OnLoad(e);
         }
-        private bool showing = false;
-        private void hideForm()
+        private bool _showing;
+        private void HideForm()
         {
-            Visible = showing = ShowInTaskbar = false;
+            Visible = _showing = ShowInTaskbar = false;
             Opacity = 0;
         }
 
-        private void showForm()
+        private void ShowForm()
         {
-            Visible = showing = ShowInTaskbar = true;
+            Visible = _showing = ShowInTaskbar = true;
             Opacity = 1;
         }
 
@@ -42,22 +42,22 @@ namespace Bing_Wallpaper
 
         private void toolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            if (showing)
-                hideForm();
+            if (_showing)
+                HideForm();
             else
-                showForm();
+                ShowForm();
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
             if (File.Exists("config.json"))
             {
-                configuration = JsonConvert.DeserializeObject<Configuration>(File.ReadAllText("config.json"));
+                _configuration = JsonConvert.DeserializeObject<Configuration>(File.ReadAllText("config.json"));
             }
             else
             {
                 //Load Default Configuration
-                configuration = new Configuration
+                _configuration = new Configuration
                 {
                     Path = $@"{Environment.GetFolderPath(Environment.SpecialFolder.MyPictures)}\Bing Wallpapers\",
                     ShowNotification = true
@@ -79,40 +79,42 @@ namespace Bing_Wallpaper
         private void AboutForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             e.Cancel = true;
-            hideForm();
+            HideForm();
         }
 
-        private string description;
-        private string detailsURL;
+        private string _description;
+        private string _detailsUrl;
 
         private bool updateWallpaper(bool force = false)
         {
             try
             {
                 BingImage bingResponse;
-                string imageURL;
-                using (WebClient bingClient = new WebClient())
+                string imageUrl;
+                using (var bingClient = new WebClient())
                 {
                     bingResponse = JsonConvert.DeserializeObject<BingImage>(bingClient.DownloadString("http://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1&mkt=en-US"));
-                    imageURL = $"http://www.bing.com{bingResponse.images.FirstOrDefault().url}";
-                    detailsURL = bingResponse.images.FirstOrDefault().copyrightlink;
-                    description = Regex.Match(bingResponse.images.FirstOrDefault().copyright, @"(.+?)(\s\(.+?\))").Groups[1].Value;
+                    imageUrl = $"http://www.bing.com{bingResponse.images.FirstOrDefault()?.url}";
+                    _detailsUrl = bingResponse.images.FirstOrDefault()?.copyrightlink;
+                    _description = Regex.Match(bingResponse.images.FirstOrDefault()?.copyright, @"(.+?)(\s\(.+?\))").Groups[1].Value;
                 }
                 toolStripMenuItem2.Visible = true;
-                string wallpapersPath = configuration.Path;
-                string picturePath = $"{wallpapersPath}\\{bingResponse.images.FirstOrDefault().hsh}.jpg";
-                if ((!File.Exists(picturePath)) || force)
+                var wallpapersPath = _configuration.Path;
+                var picturePath = $"{wallpapersPath}\\{bingResponse.images.FirstOrDefault()?.hsh}.jpg";
+                if (!File.Exists(picturePath) || force)
                 {
                     if (!Directory.Exists(wallpapersPath))
                         Directory.CreateDirectory(wallpapersPath);
-                    using (WebClient imageClient = new WebClient())
+
+                    using (var imageClient = new WebClient())
                     {
-                        imageClient.DownloadFile(imageURL, picturePath);
+                        imageClient.DownloadFile(imageUrl, picturePath);
                     }
+
                     Wallpaper.Set(picturePath);
 
-                    if (configuration.ShowNotification)
-                        notifyIcon1.ShowBalloonTip(10000, "Today's Bing Wallpaper", description, ToolTipIcon.None);
+                    if (_configuration.ShowNotification)
+                        notifyIcon1.ShowBalloonTip(10000, "Today's Bing Wallpaper", _description, ToolTipIcon.None);
 
                     return true;
                 }
@@ -129,24 +131,24 @@ namespace Bing_Wallpaper
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            if (updateWallpaper())
+            if (!updateWallpaper())
             {
-                timer1.Interval = 3600000;
+                timer1.Interval = 600000;
             }
             else
             {
-                timer1.Interval = 600000;
+                timer1.Interval = 3600000;
             }
         }
 
         private void notifyIcon1_BalloonTipClicked(object sender, EventArgs e)
         {
-            Process.Start(detailsURL);
+            Process.Start(_detailsUrl);
         }
 
         private void toolStripMenuItem2_Click(object sender, EventArgs e)
         {
-            notifyIcon1.ShowBalloonTip(10000, "Today's Bing Wallpaper", description, ToolTipIcon.None);
+            notifyIcon1.ShowBalloonTip(10000, "Today's Bing Wallpaper", _description, ToolTipIcon.None);
         }
 
         private void toolStripMenuItem3_Click(object sender, EventArgs e)
