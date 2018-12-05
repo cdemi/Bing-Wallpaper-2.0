@@ -6,6 +6,9 @@
 pool:
   vmImage: 'VS2017-Win2016'
 
+trigger:
+- master
+
 variables:
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
