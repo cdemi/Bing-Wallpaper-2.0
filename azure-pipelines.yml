@@ -24,5 +24,12 @@ steps:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
 
+- task: CopyFiles@2
+  inputs:
+    sourceFolder: 'bin/$(buildConfiguration)'
+    targetFolder: '$(Build.ArtifactStagingDirectory)'
+
 - task: PublishBuildArtifacts@1
   displayName: Publishing Artifacts
+
+
