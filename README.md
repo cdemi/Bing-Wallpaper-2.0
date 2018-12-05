@@ -1,3 +1,3 @@
 # Bing-Wallpaper-2.0
 
-_TODO: Instructions_
+_*TODO:* Instructions_
