@@ -17,6 +17,7 @@
 
     public class Image
     {
+        public string title { get; set; }
         public string startdate { get; set; }
         public string fullstartdate { get; set; }
         public string enddate { get; set; }

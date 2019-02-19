@@ -84,6 +84,7 @@ namespace Bing_Wallpaper
 
         private string _description;
         private string _detailsUrl;
+        private string _title;
 
         private bool updateWallpaper(bool force = false)
         {
@@ -96,6 +97,7 @@ namespace Bing_Wallpaper
                     bingResponse = JsonConvert.DeserializeObject<BingImage>(bingClient.DownloadString("http://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1&mkt=en-US"));
                     imageUrl = $"http://www.bing.com{bingResponse.images.FirstOrDefault()?.url}";
                     _detailsUrl = bingResponse.images.FirstOrDefault()?.copyrightlink;
+                    _title = bingResponse.images.FirstOrDefault()?.title;
                     _description = Regex.Match(bingResponse.images.FirstOrDefault()?.copyright, @"(.+?)(\s\(.+?\))").Groups[1].Value;
                 }
                 toolStripMenuItem2.Visible = true;
@@ -114,7 +116,7 @@ namespace Bing_Wallpaper
                     Wallpaper.Set(picturePath);
 
                     if (_configuration.ShowNotification)
-                        notifyIcon1.ShowBalloonTip(10000, "Today's Bing Wallpaper", _description, ToolTipIcon.None);
+                        notifyIcon1.ShowBalloonTip(10000, _title, _description, ToolTipIcon.None);
 
                     return true;
                 }
@@ -148,7 +150,7 @@ namespace Bing_Wallpaper
 
         private void toolStripMenuItem2_Click(object sender, EventArgs e)
         {
-            notifyIcon1.ShowBalloonTip(10000, "Today's Bing Wallpaper", _description, ToolTipIcon.None);
+            notifyIcon1.ShowBalloonTip(10000, _title, _description, ToolTipIcon.None);
         }
 
         private void toolStripMenuItem3_Click(object sender, EventArgs e)
