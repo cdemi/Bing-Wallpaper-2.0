@@ -4,7 +4,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Bing_Wallpaper
@@ -43,9 +45,13 @@ namespace Bing_Wallpaper
         private void toolStripMenuItem1_Click(object sender, EventArgs e)
         {
             if (_showing)
+            {
                 HideForm();
+            }
             else
+            {
                 ShowForm();
+            }
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -86,29 +92,42 @@ namespace Bing_Wallpaper
         private string _detailsUrl;
         private string _title;
 
-        private bool updateWallpaper(bool force = false)
+        private async Task<T> getUrl<T>(string url)
+        {
+            using (HttpClient client = new HttpClient())
+            using (HttpResponseMessage response = await client.GetAsync(url))
+            using (HttpContent content = response.Content)
+            {
+                string result = await content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<T>(result);
+            }
+        }
+
+        private async Task<bool> updateWallpaper(bool force = false)
         {
             try
             {
                 BingImage bingResponse;
                 string imageUrl;
-                using (var bingClient = new WebClient())
+                using (WebClient bingClient = new WebClient())
                 {
-                    bingResponse = JsonConvert.DeserializeObject<BingImage>(bingClient.DownloadString("http://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1&mkt=en-US"));
+                    bingResponse = await getUrl<BingImage>("https://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1&mkt=en-US");
                     imageUrl = $"http://www.bing.com{bingResponse.images.FirstOrDefault()?.url}";
                     _detailsUrl = bingResponse.images.FirstOrDefault()?.copyrightlink;
                     _title = bingResponse.images.FirstOrDefault()?.title;
                     _description = Regex.Match(bingResponse.images.FirstOrDefault()?.copyright, @"(.+?)(\s\(.+?\))").Groups[1].Value;
                 }
                 toolStripMenuItem2.Visible = true;
-                var wallpapersPath = _configuration.Path;
-                var picturePath = $"{wallpapersPath}\\{bingResponse.images.FirstOrDefault()?.hsh}.jpg";
+                string wallpapersPath = _configuration.Path;
+                string picturePath = $"{wallpapersPath}\\{bingResponse.images.FirstOrDefault()?.hsh}.jpg";
                 if (!File.Exists(picturePath) || force)
                 {
                     if (!Directory.Exists(wallpapersPath))
+                    {
                         Directory.CreateDirectory(wallpapersPath);
+                    }
 
-                    using (var imageClient = new WebClient())
+                    using (WebClient imageClient = new WebClient())
                     {
                         imageClient.DownloadFile(imageUrl, picturePath);
                     }
@@ -116,7 +135,9 @@ namespace Bing_Wallpaper
                     Wallpaper.Set(picturePath);
 
                     if (_configuration.ShowNotification)
+                    {
                         notifyIcon1.ShowBalloonTip(10000, _title, _description, ToolTipIcon.None);
+                    }
 
                     return true;
                 }
@@ -131,9 +152,9 @@ namespace Bing_Wallpaper
             }
         }
 
-        private void timer1_Tick(object sender, EventArgs e)
+        private async void timer1_Tick(object sender, EventArgs e)
         {
-            if (!updateWallpaper())
+            if (!(await updateWallpaper()))
             {
                 timer1.Interval = 600000;
             }
@@ -153,9 +174,9 @@ namespace Bing_Wallpaper
             notifyIcon1.ShowBalloonTip(10000, _title, _description, ToolTipIcon.None);
         }
 
-        private void toolStripMenuItem3_Click(object sender, EventArgs e)
+        private async void toolStripMenuItem3_Click(object sender, EventArgs e)
         {
-            updateWallpaper(true);
+            await updateWallpaper(true);
         }
     }
 }
