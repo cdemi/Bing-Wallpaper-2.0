@@ -133,7 +133,7 @@ namespace Bing_Wallpaper
                 string imageUrl;
                 using (WebClient bingClient = new WebClient())
                 {
-                    bingResponse = await getUrl<BingImage>("https://www.bing.com/HPImageArchives.aspx?format=js&idx=0&n=1&mkt=en-US");
+                    bingResponse = await getUrl<BingImage>("https://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1&mkt=en-US");
                     imageUrl = $"http://www.bing.com{bingResponse.images.FirstOrDefault()?.url}";
                     _detailsUrl = bingResponse.images.FirstOrDefault()?.copyrightlink;
                     _title = bingResponse.images.FirstOrDefault()?.title;
