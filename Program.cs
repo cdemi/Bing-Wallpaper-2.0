@@ -4,15 +4,15 @@ using System.Windows.Forms;
 
 namespace Bing_Wallpaper
 {
-    static class Program
+    internal static class Program
     {
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        private static void Main()
         {
-            using (var mutex = new Mutex(false, "Global\\" + appGuid))
+            using (Mutex mutex = new Mutex(false, "Global\\" + appGuid))
             {
                 if (!mutex.WaitOne(0, false))
                 {
@@ -22,10 +22,32 @@ namespace Bing_Wallpaper
 
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
-                Application.Run(new AboutForm());
+                Application.ThreadException += Application_ThreadException;
+                AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+                try
+                {
+                    Application.Run(new AboutForm());
+                }
+                catch (Exception ex)
+                {
+                    AppLogger.Logger.Error(ex, "Application.Run Exception");
+                    Application.Exit();
+                }
             }
         }
 
-        private static string appGuid = "A48877F7-25AC-4A0B-B040-885C47C225B5";
+        private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            AppLogger.Logger.Error(e.ExceptionObject as Exception, "CurrentDomain_UnhandledException");
+            Application.Exit();
+        }
+
+        private static void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
+        {
+            AppLogger.Logger.Error(e.Exception, "Application_ThreadException");
+            Application.Exit();
+        }
+
+        private static readonly string appGuid = "A48877F7-25AC-4A0B-B040-885C47C225B5";
     }
 }
