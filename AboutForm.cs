@@ -94,12 +94,34 @@ namespace Bing_Wallpaper
 
         private async Task<T> getUrl<T>(string url)
         {
-            using (HttpClient client = new HttpClient())
-            using (HttpResponseMessage response = await client.GetAsync(url))
-            using (HttpContent content = response.Content)
+            try
             {
-                string result = await content.ReadAsStringAsync();
-                return JsonConvert.DeserializeObject<T>(result);
+                using (HttpClient client = new HttpClient())
+                using (HttpResponseMessage response = await client.GetAsync(url))
+                using (HttpContent content = response.Content)
+                {
+
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        AppLogger.Logger.Warning("Non Success Status Code: {StatusCode} Full Response: {response}", response.StatusCode, response);
+                    }
+
+                    string result = await content.ReadAsStringAsync();
+                    try
+                    {
+                        return JsonConvert.DeserializeObject<T>(result);
+                    }
+                    catch (Exception ex)
+                    {
+                        AppLogger.Logger.Error(ex, "Error trying to deserialize response: {result}", result);
+                        throw;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                AppLogger.Logger.Error(ex, "Error trying to get Content");
+                throw;
             }
         }
 
@@ -146,11 +168,14 @@ namespace Bing_Wallpaper
                     return false;
                 }
             }
-            catch (WebException)
+            catch (WebException wex)
             {
+                AppLogger.Logger.Error(wex, "Error trying to update wallpaper");
                 return false;
             }
         }
+
+
 
         private async void timer1_Tick(object sender, EventArgs e)
         {
