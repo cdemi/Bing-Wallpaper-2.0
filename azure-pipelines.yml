@@ -21,6 +21,13 @@ steps:
   inputs:
     restoreSolution: '$(solution)'
 
+- task: bleddynrichards.Assembly-Info-Task.Assembly-Info-Task.Assembly-Info-NetFramework@2
+  displayName: 'Set Assembly Version'
+  inputs:
+    VersionNumber: '2.0.$(Build.BuildId)'
+    FileVersionNumber: '2.0.$(Build.BuildId)'
+    InformationalVersion: '2.0.$(Build.BuildId) - $(Build.BuildNumber)'
+
 - task: VSBuild@1
   inputs:
     solution: '$(solution)'

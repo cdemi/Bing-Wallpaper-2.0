@@ -91,6 +91,10 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <None Include="azure-pipelines.yml" />
+    <None Include="FodyWeavers.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -104,6 +108,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Bing Icon.ico" />
+    <Content Include="FodyWeavers.xml" />
     <Content Include="GitHub Logo.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
