@@ -3,6 +3,8 @@
 # Add steps that publish symbols, save build artifacts, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/apps/windows/dot-net
 
+name: 2.0.$(Build.BuildId)
+
 pool:
   vmImage: 'VS2017-Win2016'
 
@@ -24,9 +26,9 @@ steps:
 - task: bleddynrichards.Assembly-Info-Task.Assembly-Info-Task.Assembly-Info-NetFramework@2
   displayName: 'Set Assembly Version'
   inputs:
-    VersionNumber: '2.0.$(Build.BuildId)'
-    FileVersionNumber: '2.0.$(Build.BuildId)'
-    InformationalVersion: '2.0.$(Build.BuildId) - $(Build.BuildNumber)'
+    VersionNumber: '$(Build.BuildNumber)'
+    FileVersionNumber: '$(Build.BuildNumber)'
+    InformationalVersion: '$(Build.BuildNumber)'
 
 - task: VSBuild@1
   inputs:
