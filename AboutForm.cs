@@ -71,7 +71,7 @@ namespace Bing_Wallpaper
                 };
             }
             timer1_Tick(null, null);
-            lblVersion.Text = Assembly.GetEntryAssembly().GetName().Version.ToString();
+            lblVersion.Text = Assembly.GetEntryAssembly().GetName().Version.ToString(3);
         }
 
         private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
