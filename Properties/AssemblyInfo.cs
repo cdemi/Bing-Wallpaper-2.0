@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Bing Wallpaper")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Bing Wallpaper 2.0")]
+[assembly: AssemblyDescription("https://github.com/cdemi/Bing-Wallpaper-2.0")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Bing Wallpaper")]
-[assembly: AssemblyCopyright("Copyright ©  2019")]
+[assembly: AssemblyProduct("Bing Wallpaper 2.0")]
+[assembly: AssemblyCopyright("MIT License https://github.com/cdemi/Bing-Wallpaper-2.0/blob/master/LICENSE")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
