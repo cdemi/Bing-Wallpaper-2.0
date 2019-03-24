@@ -10,7 +10,7 @@ You can download the latest release of `Windows.zip` from <https://github.com/cd
 
 ## Install
 
-1. Extract the zip file to a permanent location of your choosing. For example: `C:\Program Files (x86)\Bing Wallpaper\`
+1. Extract the downloaded zip file to a permanent location of your choosing. For example: `C:\Program Files (x86)\Bing Wallpaper\`
 2. _(Optional)_ Add a `config.json` file in that folder with customizations:
 
 ```json
