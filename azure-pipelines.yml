@@ -24,9 +24,9 @@ steps:
 - task: bleddynrichards.Assembly-Info-Task.Assembly-Info-Task.Assembly-Info-NetFramework@2
   displayName: 'Set Assembly Version'
   inputs:
-    VersionNumber: '2.0.$(Build.SourceVersion)'
-    FileVersionNumber: '2.0.$(Build.SourceVersion)'
-    InformationalVersion: '$(Build.SourceVersion)'
+    VersionNumber: '2.0.$(Build.BuildNumber)'
+    FileVersionNumber: '2.0.$(Build.BuildNumber)'
+    InformationalVersion: '2.0.$(Build.BuildNumber)'
 
 - task: VSBuild@1
   inputs:
