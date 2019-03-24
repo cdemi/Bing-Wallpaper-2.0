@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -70,6 +71,7 @@ namespace Bing_Wallpaper
                 };
             }
             timer1_Tick(null, null);
+            lblVersion.Text = Assembly.GetEntryAssembly().GetName().Version.ToString();
         }
 
         private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -202,6 +204,11 @@ namespace Bing_Wallpaper
         private async void toolStripMenuItem3_Click(object sender, EventArgs e)
         {
             await updateWallpaper(true);
+        }
+
+        private void lblVersion_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Process.Start("https://github.com/cdemi/Bing-Wallpaper-2.0/releases/latest");
         }
     }
 }
