@@ -1,4 +1,6 @@
 # Bing Wallpaper 2.0
+[![Build Status](https://dev.azure.com/christopherdemicoli/Bing-Wallpaper-2.0/_apis/build/status/cdemi.Bing-Wallpaper-2.0?branchName=master)](https://dev.azure.com/christopherdemicoli/Bing-Wallpaper-2.0/_build/latest?definitionId=3&branchName=master) [![Release Status](https://vsrm.dev.azure.com/christopherdemicoli/_apis/public/Release/badge/c49653e3-b5f0-4acd-ac7b-bdc695c22110/1/1)](https://dev.azure.com/christopherdemicoli/Bing-Wallpaper-2.0/_build/latest?definitionId=3&branchName=master) [![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=cdemi/Bing-Wallpaper-2.0)](https://dependabot.com)
+
 
 ## Requirements
 
